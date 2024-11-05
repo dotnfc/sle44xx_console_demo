@@ -419,8 +419,8 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                         string data = response.Substring(4, 2);
                         string protectionByte = response.Substring(6, 2);
                         string bitSet = protectionByte != "00" ? "not set" : "set";
-                        //PrintData($"Read Main Memory, Address 0x{address:X4}", command, response,
-                        //    $"Value 0x{data}, {protectionByte} -> protection bit {bitSet}");
+                        PrintData($"Read Main Memory, Address 0x{address:X4}", command, response,
+                            $"Value 0x{data}, {protectionByte} -> protection bit {bitSet}");
                         cardMemory += data;
                         attr[i] = protectionByte != "00" ? false : true;
                     }
@@ -477,14 +477,14 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 Random random = new Random();
                 byte value = (byte)random.Next(0, 256);
 
-                ushort address = 0x0030;
+                ushort address = 0x0040;
                 byte data = value;
 
                 string command = threeWireBusProtocol.GetApdu(Synchronus3WBP.ControlByte.WriteAndEraseWithoutProtectBit, address, data);
                 string response = smartCardReader.OKTransmit(command);
                 PrintData($"Write Main Memory, address: 0x{address:X4}, data: 0x{data:X2}", command, response, response.Equals("9D009000") ? "Success" : "Error Response");
 
-                address = 0x0031;
+                address = 0x0041;
                 data = value;
                 command = threeWireBusProtocol.GetApdu(Synchronus3WBP.ControlByte.WriteAndEraseWithoutProtectBit, address, data);
                 response = smartCardReader.OKTransmit(command);
@@ -552,7 +552,7 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 for (int j = i; j < i + bytesPerLine && j < totalBytes; j++)
                 {
                     // Console.Write($"{array[j]:X2} ");
-                    PrintColorByte(showColor, arr_attr[i], $"{array[j]:X2} ", colorDefault);
+                    PrintColorByte(showColor, arr_attr[j], $"{array[j]:X2} ", colorDefault);
                 }
 
                 // 打印空格以对齐ASCII部分
@@ -568,12 +568,12 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                     if (ch < 32 || ch > 126)
                     {
                         // Console.Write(".");
-                        PrintColorByte(showColor, arr_attr[i], ".", colorDefault);
+                        PrintColorByte(showColor, arr_attr[j], ".", colorDefault);
                     }
                     else
                     {
                         // Console.Write(ch);
-                        PrintColorByte(showColor, arr_attr[i], ch.ToString(), colorDefault);
+                        PrintColorByte(showColor, arr_attr[j], ch.ToString(), colorDefault);
                     }
                 }
 
