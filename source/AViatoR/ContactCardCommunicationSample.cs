@@ -86,7 +86,7 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 }
                 //Console.WriteLine($"\nMain Memory starting from address 0x20 to address 0xFF:\n{cardMemory}\n");
                 Console.WriteLine($"\nMain Memory starting from address 0x00 to address 0xFF:\n");
-                PrintByteArray(Utils.HexStringToByteArray(cardMemory), 0);
+                PrintByteArray(Utils.HexStringToByteArray(cardMemory), null, 0);
 
                 smartCardReader.Disconnect(CardDisposition.Unpower);
             }
@@ -406,6 +406,7 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 ushort address = 0x00;
                 byte notUsed = 0x00;
                 string cardMemory = string.Empty;
+                bool[] attr = new bool[0x400];
 
                 // read data from addresses 0x0000 - 0x03FF
                 for (int i = 0x00; i < 0x0400; i++)
@@ -418,9 +419,10 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                         string data = response.Substring(4, 2);
                         string protectionByte = response.Substring(6, 2);
                         string bitSet = protectionByte != "00" ? "not set" : "set";
-                        PrintData($"Read Main Memory, Address 0x{address:X4}", command, response,
-                            $"Value 0x{data}, {protectionByte} -> protection bit {bitSet}");
+                        //PrintData($"Read Main Memory, Address 0x{address:X4}", command, response,
+                        //    $"Value 0x{data}, {protectionByte} -> protection bit {bitSet}");
                         cardMemory += data;
+                        attr[i] = protectionByte != "00" ? false : true;
                     }
                     else
                     {
@@ -430,7 +432,7 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 }
                 //Console.WriteLine($"\nMain Memory starting from address 0x0000 to address 0x03FF:\n{cardMemory}\n");
                 Console.WriteLine($"\nMain Memory starting from address 0x0000 to address 0x03FF:\n");
-                PrintByteArray(Utils.HexStringToByteArray(cardMemory), 0);
+                PrintByteArray(Utils.HexStringToByteArray(cardMemory), attr, 0);
                 smartCardReader.Disconnect(CardDisposition.Unpower);
             }
             catch (Exception e)
@@ -438,6 +440,7 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 Console.WriteLine(e.Message);
             }
         }
+
 
         public static void Verify3WbpExample(string readerName)
         {
@@ -514,11 +517,31 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
             }
         }
 
-        public static void PrintByteArray(byte[] array, uint offset = 0)
+        public static void PrintColorByte(bool showColor, bool isProtected, string strByte, ConsoleColor colorDefault)
+        {
+            if (showColor)
+            {
+                if (isProtected)
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                Console.Write(strByte);
+                Console.ForegroundColor = colorDefault;
+            }
+            else
+            {
+                Console.Write(strByte);
+            }
+        }
+
+        public static void PrintByteArray(byte[] array, bool[] arr_attr = null, uint offset = 0)
         {
             int bytesPerLine = 16;
             int totalBytes = array.Length;
             int address = 0;
+            bool showColor = arr_attr != null;
+            ConsoleColor colorDefault = Console.ForegroundColor;
 
             for (int i = 0; i < totalBytes; i += bytesPerLine)
             {
@@ -528,7 +551,8 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                 // 打印16个十六进制值
                 for (int j = i; j < i + bytesPerLine && j < totalBytes; j++)
                 {
-                    Console.Write($"{array[j]:X2} ");
+                    // Console.Write($"{array[j]:X2} ");
+                    PrintColorByte(showColor, arr_attr[i], $"{array[j]:X2} ", colorDefault);
                 }
 
                 // 打印空格以对齐ASCII部分
@@ -543,11 +567,13 @@ namespace HidGlobal.OK.SampleCodes.AViatoR
                     char ch = (char)array[j];
                     if (ch < 32 || ch > 126)
                     {
-                        Console.Write(".");
+                        // Console.Write(".");
+                        PrintColorByte(showColor, arr_attr[i], ".", colorDefault);
                     }
                     else
                     {
-                        Console.Write(ch);
+                        // Console.Write(ch);
+                        PrintColorByte(showColor, arr_attr[i], ch.ToString(), colorDefault);
                     }
                 }
 

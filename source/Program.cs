@@ -8,15 +8,11 @@ namespace SCardSyncDemo
 {
     internal class Program
     {
-        private static IMenuItem _rootMenu = new MenuItem("SyncVendor Samples", true);
-        private static IMenuSection _smartCardReadersSection = new SmartCardReadersMenuSection(SmartCardReadersMenuFactory.Instance);
-
-
         static void Main(string[] args)
         {
-            _rootMenu.AddSubItem(_smartCardReadersSection.RootMenuItem);
-
-            _rootMenu.Execute();
+            IMenuSection rootMenu;
+            rootMenu = new SmartCardReadersMenuSection(SmartCardReadersMenuFactory.Instance);
+            rootMenu.RootMenuItem.Execute();
         }
     }
 }

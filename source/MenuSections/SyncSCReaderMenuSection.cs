@@ -21,8 +21,8 @@ namespace SCardSyncDemo.MenuSections
         public SyncSCReaderMenuSection(string readerName, string serialNumber)
         {
             var description = string.IsNullOrWhiteSpace(serialNumber)
-                ? $"PCSC Reader Name: {readerName}"
-                : $"PCSC Reader Name: {readerName}\nSerial Number: {serialNumber}";
+                ? $"{readerName}"
+                : $"{readerName}\nSerial Number: {serialNumber}";
 
             _rootMenuItem = new MenuItem(description);
 
@@ -38,7 +38,7 @@ namespace SCardSyncDemo.MenuSections
 
                 var synchronus3wbp = synchronusContactCardExamples.AddSubItem("3WBP Example(SLE 4418/28/FM4428)");
                 {
-                    synchronus3wbp.AddSubItem("Read Main Memory", () => ContactCardCommunicationSample.ReadMainMemory3WbpExample(readerName));
+                    synchronus3wbp.AddSubItem("Read Memory(With Protect Bits)", () => ContactCardCommunicationSample.ReadMainMemory3WbpExample(readerName));
                     synchronus3wbp.AddSubItem("Verify", () => ContactCardCommunicationSample.Verify3WbpExample(readerName));
                     synchronus3wbp.AddSubItem("Update Main Memory", () => ContactCardCommunicationSample.UpdateMainMemory3WbpExample(readerName));
                 }

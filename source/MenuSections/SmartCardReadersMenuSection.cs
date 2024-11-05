@@ -30,7 +30,7 @@ namespace HidGlobal.OK.SampleCodes.MenuSections
     public class SmartCardReadersMenuSection : IMenuSection
     {
         private readonly IMenuSectionsFactory _menuSectionsFactory;
-        private readonly IMenuItem _rootMenuItem = new MenuItem("Smart Card Readers");
+        private readonly IMenuItem _rootMenuItem = new MenuItem("Smart Card Readers", true);
 
         public IMenuItem RootMenuItem
         {
